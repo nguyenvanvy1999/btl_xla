@@ -1,16 +1,12 @@
-import logo from './logo.svg';
 import './App.css';
 import { CustomText } from './components/text/text';
+import { Upload } from './components/upload/upload';
 
 function App() {
 	return (
 		<div className="App">
-			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo" />
-			</header>
-			<body>
-				<CustomText />
-			</body>
+			<Upload />
+			<CustomText />
 		</div>
 	);
 }

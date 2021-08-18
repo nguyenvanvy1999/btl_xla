@@ -1,35 +1,45 @@
-# import the necessary packages
+from fastapi import FastAPI, File, UploadFile
+import logging
+import os
 from firebase_admin import db
 from firebase_admin import credentials
 import firebase_admin
 import math
 import cv2
-import numpy as np
 import sys
+from fastapi.middleware.cors import CORSMiddleware
 sys.path.append('C:\Python36\Lib\site-packages\cv2')
 
+log = logging.getLogger(__name__)
+app = FastAPI()
+origins = ["http://localhost:3000"]
 
-def init_firebase():
-    # config firebase
-    cred = credentials.Certificate("key.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://control-car-64f69-default-rtdb.asia-southeast1.firebasedatabase.app/',
-        'databaseAuthVariableOverride': {
-            'uid': 'my-service-worker'
-        }
-    })
-    ref = db.reference('/')
-    return ref
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+cred = credentials.Certificate("key.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://control-car-64f69-default-rtdb.asia-southeast1.firebasedatabase.app/',
+    'databaseAuthVariableOverride': {
+        'uid': 'my-service-worker'
+    }
+})
+ref = db.reference('/')
 
 
-def detected():
+def detected(file_name):
     # load the image
-    first_read_image = cv2.imread("resistorfourband.png")
+    first_read_image = cv2.imread(file_name)
     # convert image from BGR to RGB
     image = cv2.cvtColor(first_read_image, cv2.COLOR_BGR2RGB)
     rows, columns, channels = image.shape
     # rows,columns,channels
-    # print the shape of image
+    # print the shape of image. Shape is a tuple of the number of rows, columns, and channels (if the image is color)
     print('Image shape: ', image.shape)
     # get mean color value of the image
     mean_color = cv2.mean(image)
@@ -38,9 +48,9 @@ def detected():
     # make 3 new arrays with size equal to number of columns in small image
     numbers_of_dark_pixels_in_each_column = [0 for i in range(columns)]
     addition_of_row_numbers_having_dark_pixels_in_each_column = [
-        0 for i in range(columns)]
+        0 for _ in range(columns)]
     average_of_row_numbers_having_dark_pixels_in_each_column = [
-        0 for i in range(columns)]
+        0 for _ in range(columns)]
     # travel row by row downwards in each column from left to right in small image
     global num
     for x in range(0, columns):
@@ -51,7 +61,7 @@ def detected():
             # res is empty if no image loaded, then continue
             if res is None:
                 continue
-            # if the respecitve values stored in res are greater than half of the respective values in the mean color of the small image
+            # if the respective values stored in res are greater than half of the respective values in the mean color of the small image
             # then pass (these are the light parts of the image)
             # if not, increment num by 1 and set respective array position of avgy equal to column number as the value already stored plus y
             if res[0] > mean_color[0] * 0.5 and res[1] > mean_color[1] * 0.5 and res[2] > mean_color[2] * 0.5:
@@ -137,42 +147,27 @@ def detected():
             res = cv2.fastNlMeansDenoising(res, None, 10, 7, 30)
             res = cv2.GaussianBlur(res, (15, 15), 0)
             res = cv2.GaussianBlur(res, (15, 15), 0)
-            cv2.imshow('res', cv2.cvtColor(res, cv2.COLOR_BGR2RGB))
             # the brighter values of colors
             bright_codes = [(0, 0, 0),  # black
                             (156, 102, 51),  # brown
-                            # red
-                            (255, 0, 0),
-                            # orange
-                            (255, 102, 0),
-                            # yellow
-                            (255, 255, 0),
-                            # green
-                            (0, 255, 0),
-                            # blue
-                            (0, 0, 255),
-                            # violet
-                            (200, 0, 255),
-                            # gray
-                            (128, 128, 128),
+                            (255, 0, 0),  # red
+                            (255, 102, 0),  # orange
+                            (255, 255, 0),  # yellow
+                            (0, 255, 0),  # green
+                            (0, 0, 255),  # blue
+                            (200, 0, 255),  # violet
+                            (128, 128, 128),  # gray
                             (255, 255, 255)]  # white
             # the darker values of colors
             dark_codes = [(20, 20, 20),  # black
                           (71, 53, 38),  # brown
-                          # red
-                          (204, 0, 0),
-                          # orange
-                          (255, 51, 0),
-                          # yellow
-                          (255, 204, 102),
-                          # green
-                          (30, 200, 50),
-                          # blue
-                          (40, 73, 86),
-                          # violet
-                          (110, 0, 51),
-                          # gray
-                          (73, 65, 62),
+                          (204, 0, 0),  # red
+                          (255, 51, 0),  # orange
+                          (255, 204, 102),  # yellow
+                          (30, 200, 50),  # green
+                          (40, 73, 86),  # blue
+                          (110, 0, 51),  # violet
+                          (73, 65, 62),  # gray
                           (250, 250, 250)]  # white
             color_name = ["black", "brown", "red", "orange",
                           "yellow", "green", "blue", "violet", "gray", "white"]
@@ -251,19 +246,26 @@ def detected():
             cv2.putText(image, answer, (50, 50),
                         cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0))
             print("Resistance : ", answer)
-        final = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        cv2.imshow("Final Output", final)
-        cv2.waitKey(10000)
         return answer
 
 
-def main():
-    ref = init_firebase()
-    answer = detected()
+@app.post("/upload/")
+async def image(image: UploadFile = File(...)):
+    try:
+        os.mkdir("images")
+    except Exception as e:
+        print(e)
+    file_name = os.getcwd()+"/images/"+image.filename.replace(" ", "-")
+    with open(file_name, 'wb+') as f:
+        f.write(image.file.read())
+        f.close()
+    answer = detected(file_name)
     ref.set({
-        'resistor': answer
+        'answer': answer
     })
+    return {'answer': answer}
 
 
-if __name__ == "__main__":
-    main()
+@app.get('/')
+def root():
+    return 'Hello world'
