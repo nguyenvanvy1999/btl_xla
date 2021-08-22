@@ -112,11 +112,11 @@
 }
 
 .resistor-body .colors.gold {
-	background-image: url("./public/static/images/gold-bg.jpg");
+	background-image: url("../public/static/images/gold-bg.jpg");
 }
 
 .resistor-body .colors.silver {
-	background-image: url("./public/static/images/silver-bg.jpg");
+	background-image: url("../public/static/images/silver-bg.jpg");
 }
 
 .resistor-leads {

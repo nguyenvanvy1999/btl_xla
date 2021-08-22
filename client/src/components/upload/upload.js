@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Input from '@material-ui/core/Input';
 import axios from 'axios';
-import { url } from '../../const';
+import { url } from '../../core/constants';
 
 const useStyles = makeStyles((theme) => ({
 	button: {

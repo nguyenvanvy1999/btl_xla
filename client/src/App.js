@@ -1,13 +1,21 @@
+import React from 'react';
 import './App.css';
-import { CustomText } from './components/text/text';
+import Header from './components/ResistanceCalculator/Header';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Resistor from './components/ResistanceCalculator/Resistor';
+import { Container } from '@material-ui/core';
 import { Upload } from './components/upload/upload';
-
 function App() {
 	return (
-		<div className="App">
-			<Upload />
-			<CustomText />
-		</div>
+		<CssBaseline>
+			<div className="resistor-calc-app">
+				<Header />
+				<Upload />
+				<Container>
+					<Resistor />
+				</Container>
+			</div>
+		</CssBaseline>
 	);
 }
 
