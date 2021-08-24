@@ -3,7 +3,7 @@ import { Grid } from "@material-ui/core";
 import {
   colorCodes,
   NONE,
-  multiplerCodes,
+  multiplierCodes,
   toleranceCodes
 } from "../../core/constants";
 import clsx from "clsx";
@@ -13,7 +13,7 @@ function ColorBand({ codes, type, band }) {
   let typeData = colorCodes;
   switch (type) {
     case "multiplier":
-      typeData = multiplerCodes;
+      typeData = multiplierCodes;
       break;
     case "tolerance":
       typeData = toleranceCodes;
@@ -35,9 +35,6 @@ function ColorBand({ codes, type, band }) {
             : ""
         )}
       >
-        {/* <Hidden mdDown>
-      <span>{colorCodes[codes.color3].label}</span>
-    </Hidden> */}
       </div>
     </Grid>
   );

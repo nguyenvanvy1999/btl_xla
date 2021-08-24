@@ -1,13 +1,13 @@
 import React from "react";
 import { Slider, Hidden, Box } from "@material-ui/core";
-import { colorCodes, multiplerCodes, toleranceCodes } from "../../core/constants";
+import { colorCodes, multiplierCodes, toleranceCodes } from "../../core/constants";
 
 function ColorCodeSelector({ setColorCode, bandName, type = "color" }) {
   let typeData = colorCodes;
 
   switch (type) {
     case "multiplier":
-      typeData = multiplerCodes;
+      typeData = multiplierCodes;
       break;
     case "tolerance":
       typeData = toleranceCodes;

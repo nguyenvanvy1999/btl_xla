@@ -30,7 +30,7 @@ export const colorCodes = [
 	{ label: NONE, value: -1 },
 ];
 
-export const multiplerCodes = [
+export const multiplierCodes = [
 	{ label: NONE, value: -1 },
 	{ label: BLACK, value: 1 },
 	{ label: BROWN, value: 10 },

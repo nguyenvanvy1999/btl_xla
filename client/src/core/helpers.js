@@ -1,5 +1,5 @@
 import React from 'react';
-import { NONE, colorCodes, multiplerCodes, toleranceCodes, UNICODE_PLUS_MINUS } from './constants';
+import { NONE, colorCodes, multiplierCodes, toleranceCodes, UNICODE_PLUS_MINUS } from './constants';
 
 export function formatResistorValue(value) {
 	let formatedValue = value;
@@ -30,7 +30,7 @@ export function getLabel(value, colorData) {
  */
 export function getColorDisplayValue(index, typeData, band = '') {
 	let colorValue = NONE;
-	if (band === 'multipler') {
+	if (band === 'multiplier') {
 		colorValue =
 			typeData[index].value !== -1 ? (
 				<>
@@ -49,10 +49,10 @@ export function getCalculationDisplayDetails(codes) {
 	if (
 		colorCodes[codes.color1].value !== -1 &&
 		colorCodes[codes.color2].value !== -1 &&
-		multiplerCodes[codes.multiplier].value !== -1
+		multiplierCodes[codes.multiplier].value !== -1
 	) {
 		return ` = ${colorCodes[codes.color1].value}${colorCodes[codes.color2].value} x ${
-			multiplerCodes[codes.multiplier].value
+			multiplierCodes[codes.multiplier].value
 		}Ω ${UNICODE_PLUS_MINUS} ${toleranceCodes[codes.tolerance].value}`;
 	} else {
 		return null;

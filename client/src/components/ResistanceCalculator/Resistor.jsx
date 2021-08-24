@@ -6,7 +6,7 @@ import clsx from "clsx";
 import ColorCodeSelector from "./ColorCodeSelector";
 import {
   colorCodes,
-  multiplerCodes,
+  multiplierCodes,
   toleranceCodes,
   UNICODE_PLUS_MINUS
 } from "../../core/constants";
@@ -29,24 +29,23 @@ function Resistor() {
     ppm: ""
   });
 
-  const [resitorValue, setResistorValue] = useState(0);
+  const [resistorValue, setResistorValue] = useState(0);
 
   function setColorCode(key, value) {
     setCodes({ ...codes, [key]: value });
   }
   function findResistorValue({ color1, color2, color3, multiplier }) {
-    //TODO: validations
     return formatResistorValue(
       (parseInt(`${colorCodes[color1].value}${colorCodes[color2].value}`) *
-        (multiplerCodes[multiplier].value * 100)) /
-        100 /* 100/100 to round to 2 decimals */
+        (multiplierCodes[multiplier].value * 100)) /
+        100 // 100/100 to round to 2 decimals
     );
   }
   useEffect(() => {
     if (
       colorCodes[codes.color1].value !== -1 &&
       colorCodes[codes.color2].value !== -1 &&
-      multiplerCodes[codes.multiplier].value !== -1
+      multiplierCodes[codes.multiplier].value !== -1
     ) {
       setResistorValue(findResistorValue(codes));
     } else {
@@ -58,7 +57,7 @@ function Resistor() {
       <Box my={2} textAlign="center">
         <Box my={1}>
           <Box component="span" fontSize="3em">
-            {resitorValue}Ω{" "}
+            {resistorValue}Ω{" "}
             <span className="text-gray">
               {` ${UNICODE_PLUS_MINUS}
                ${toleranceCodes[codes.tolerance] &&
@@ -148,14 +147,14 @@ function Resistor() {
             <small
               className={clsx(
                 "text-uppercase",
-                `text-${getLabel(codes.multiplier, multiplerCodes)}`
+                `text-${getLabel(codes.multiplier, multiplierCodes)}`
               )}
             >
-              {getLabel(codes.multiplier, multiplerCodes)}{" "}
+              {getLabel(codes.multiplier, multiplierCodes)}{" "}
               {getColorDisplayValue(
                 codes.multiplier,
-                multiplerCodes,
-                "multipler"
+                multiplierCodes,
+                "multiplier"
               )}
             </small>
           </Grid>
