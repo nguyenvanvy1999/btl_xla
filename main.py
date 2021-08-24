@@ -144,7 +144,6 @@ if x_min >= 0:
                                        + math.pow(c1[1] - c2[1], 2)
                                        + math.pow(c1[2] - c2[2], 2))/100
             average_distance += (background_distances[x] / res_columns)
-
         res = cv2.fastNlMeansDenoising(res, None, 10, 7, 30)  # denoising
         res = cv2.GaussianBlur(res, (15, 15), 0)
 
@@ -221,7 +220,7 @@ if x_min >= 0:
                         maxnum = sumc[i]
                         code = i
 
-                if code is not -1:
+                if code != -1:
                     # display colours and colour names
                     cv2.rectangle(image, ((int)(numcodes*columns/4), rows-40), ((int)(
                         (numcodes + 1)*columns/4), rows), bright_codes[code], -1)  # Original
@@ -264,4 +263,4 @@ if x_min >= 0:
 
     final = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     cv2.imshow("Final Output", final)
-    cv2.waitKey(100000)
+    cv2.waitKey()
